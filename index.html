@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>起重機操作吊掛手作業前自檢表</title>
+    <title>起重機操作手作業前自檢表</title>
     
     <link rel="manifest" href="manifest.json">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="起重機檢查">
+    <meta name="apple-mobile-web-app-title" content="起重機操作手檢查">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <meta name="theme-color" content="#2c3e50">
@@ -55,11 +55,6 @@
         .group-title {
             color: #0d6efd; font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid #dee2e6; 
             padding-bottom: 8px; margin-bottom: 15px;
-        }
-        /* 下拉選單樣式 */
-        .select-box {
-            border-left: 5px solid #0d6efd; background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .panel-row.completed { border-left-color: #198754; } 
@@ -118,7 +113,7 @@
     <form id="checkForm">
         <div class="card-box">
             <div class="app-header">
-                <div class="app-title">🏗️ 起重機作業前自檢表</div>
+                <div class="app-title">🏗️ 起重機操作手作業前自檢</div>
                 <small id="autoSaveStatus" style="color:#198754; display:none; font-weight:bold;">✅ 已自動儲存</small>
             </div>
             <div class="section-title">1. 作業基本資料 (必填)</div>
@@ -130,8 +125,8 @@
                 <div class="col-6"><label>2. 次承商 Sub Contractor</label><input type="text" id="subContractor" placeholder="輸入次承商..." oninput="autoSave()"></div>
             </div>
             <div class="row">
-                <div class="col-6"><label>3. 檢查人員 Inspector</label><input type="text" id="inspectorName" placeholder="輸入姓名..." oninput="autoSave()"></div>
-                <div class="col-6"><label>4. 吊掛點位 Lifting Point</label><input type="text" id="liftingPoint" placeholder="輸入點位..." oninput="autoSave()"></div>
+                <div class="col-6"><label>3. 操作人員 Operator</label><input type="text" id="inspectorName" placeholder="輸入姓名..." oninput="autoSave()"></div>
+                <div class="col-6"><label>4. 吊掛點位/車號</label><input type="text" id="liftingPoint" placeholder="輸入點位或車號..." oninput="autoSave()"></div>
             </div>
         </div>
 
@@ -155,74 +150,43 @@
 </div>
 
 <script>
-    // === 1. 資料設定 (支援下拉選單與題組) ===
-    // 圖片請填寫實際檔案路徑，若無圖片則留空
+    // === 1. 資料設定 (已更新為起重機操作手專用版本) ===
     const CHECK_CONFIG = [
         {
-            type: "selection",
-            id: "cat_rigging",
-            title: "1. 吊掛索具檢點 (請選擇類型)",
-            options: {
-                "none": { label: "-- 請選擇索具類型 --", items: [] },
-                "wire": { 
-                    label: "1. 鋼索", 
-                    items: [
-                        { id: "w1", title: "1-1. 鋼索斷絲是否無達到10%素線截斷?", image: "1-1.png" },
-                        { id: "w2", title: "1-2. 鋼索磨損與變形是否無達到直徑減少7%?", image: "1-2.png" }
-                    ]
-                },
-                "chain": { 
-                    label: "2. 吊鏈", 
-                    items: [
-                        { id: "c1", title: "1-1. 吊鏈是否無延伸長度達5%或斷面直徑減少10%?", image: "2-1.png" },
-                        { id: "c2", title: "1-2. 吊鏈是否無龜裂?", image: "2-2.png" }
-                    ]
-                },
-                "fiber": { 
-                    label: "3. 纖維吊帶/繩", 
-                    items: [
-                        { id: "f1", title: "1-1. 纖維吊帶/繩是否無切痕或破損?", image: "3-1.png" },
-                        { id: "f2", title: "1-2. 外觀標示是否清楚辨識?", image: "" }
-                    ]
-                }
-            }
+            type: "group",
+            id: "cat_part1",
+            title: "A. 前置準備與機身設定",
+            items: [
+                { id: "op_01", title: "【指揮系統】是否已確認唯一的專責指揮手是誰，且雙方溝通的手勢或無線電信號是否已約定統一？", image: "" },
+                { id: "op_02", title: "【文書許可】是否已確認施工單/派工單內容無誤，且您是否已充分了解今日作業的潛在危害與風險？", image: "" },
+                { id: "op_03", title: "【每日自檢】是否已確實填寫每日自檢表，並確認過捲預防裝置、過負荷限制器、制動器(煞車)、鋼索及吊鉤防脫片功能是否皆正常？", image: "" },
+                { id: "op_04", title: "【荷重確認】是否已查閱起重機荷重表，並確認本次吊掛物重量是否確實小於當下工況的額定荷重？", image: "" },
+                { id: "op_05", title: "【區域管制】是否已確認作業半徑及迴轉範圍內完成管制，且吊舉路徑下方是否已保持淨空、無人員逗留？", image: "" },
+                { id: "op_06", title: "【機身穩定】外伸撐座是否已依規定完全伸出，且支撐地面是否堅固並已確實鋪墊枕木或鐵板？", image: "" }
+            ]
         },
         {
             type: "group",
-            id: "cat_hook",
-            title: "2. 吊鉤與配件",
+            id: "cat_part2",
+            title: "B. 操作測試與運行控制",
             items: [
-                { id: "h1", title: "2.1 吊掛鉤頭插銷是否完全插入?", image: "2.2.png" },
-                { id: "h2", title: "2.2 吊鉤是否無開口或變形?", image: "2.png" }
+                { id: "op_07", title: "【極限測試】(防止撞擊天花板) 在掛上重物之前，是否已先進行空載測試，並實際確認上捲預防裝置（極限開關）是否能有效讓吊鉤自動停止？", image: "" },
+                { id: "op_08", title: "【試吊確認】(防止煞車失效) 在起吊離地 10~20 公分時，是否有執行「暫停動作」，並確認制動器（煞車）是否能穩固抓住負載、無任何下滑（漂移）現象？", image: "" },
+                { id: "op_09", title: "【防擺控制】(防止撞擊機台) 操作時是否已確認吊鉤位於負載重心的正上方（無歪拉斜吊），以確保起吊瞬間負載是否平穩上升、無劇烈擺盪？", image: "" },
+                { id: "op_13", title: "【緊急應變】(防止災難擴大) 您是否清楚緊急停止按鈕（E-Stop）的確切位置，且是否確認該按鈕功能正常、按下後能切斷所有動力？", image: "" }
             ]
         },
-        // === [新增] 3. 作業前綜合關鍵確認 ===
         {
             type: "group",
-            id: "cat_pre_check",
-            title: "3. 吊掛作業前六不吊",
+            id: "cat_part3",
+            title: "C. 吊掛技術與環境防護",
             items: [
-                { id: "p1", title: "3-1. 【指揮與資格】現場是否已指派專責指揮人員，且您與操作手是否皆已具備合格證照？", image: "" },
-                { id: "p2", title: "3-2. 【文件許可】施工申請單與作業許可是否已完成簽核，且現場人員是否已充分了解危害告知內容？", image: "" },
-                { id: "p3", title: "3-3. 【設備自檢】鋼索、吊鉤及防脫落裝置是否經檢查確認功能正常（無斷絲變形），且是否已確實勾選每日自檢表？", image: "" },
-                { id: "p4", title: "3-4. 【荷重確認】是否已確認吊掛物重量在起重機額定荷重範圍內，且吊具強度是否足夠？", image: "" },
-                { id: "p5", title: "3-5. 【區域管制】吊掛作業區域是否已圍設警示帶，且吊掛路徑下方是否已確實淨空無人員逗留？", image: "" },
-                { id: "p6", title: "3-6. 【機具穩定】起重機外伸撐座是否已完全伸出並鋪設墊板，且停放地面是否水平堅固？", image: "" }
+                { id: "op_10", title: "【銳角防護】(防止吊帶割斷) 吊掛物若有銳利邊緣或稜角（如鋼板、機台底座），是否已確實使用護角（軟墊）或防切割套進行保護？", image: "" },
+                { id: "op_11", title: "【吊掛角度】(防止張力過大) 是否已確認吊索之間的夾角位於安全範圍內（建議 60 度以上），且吊索長度是否足夠避免擠壓負載？", image: "" },
+                { id: "op_12", title: "【防滑確認】(針對鋼筋/散狀物) 若是吊掛鬆散束狀物（如管件、鋼筋），是否已採用「雙圈束頸」綁法，且是否確認負載已被牢固抓緊、無滑出風險？", image: "" },
+                { id: "op_14", title: "【環境因子】(戶外/夜間作業) 作業現場的光線照明是否充足，且當下風速是否已確認在起重機原廠規範的安全作業範圍內？", image: "" },
+                { id: "op_15", title: "【個人防護】(最後一道防線) 您與相關作業人員是否皆已正確穿戴符合規定的個人防護具（如安全帽、安全鞋、反光背心）？", image: "" }
             ]
-        },
-        // === [順延] 原本的第 3 題變更為第 4 題 ===
-        {
-            type: "simple",
-            id: "g1",
-            title: "4. 吊掛作業前是否完成試吊333運動？？",
-            image: "3.png"
-        },
-        // === [順延] 原本的第 4 題變更為第 5 題 ===
-        {
-            type: "simple",
-            id: "cat_env_load",
-            title: "5. 氣候條件符合吊掛作業要求?",
-            image: ""
         }
     ];
 
@@ -234,9 +198,9 @@
     const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
     if (isIos() && !isInStandaloneMode()) setTimeout(() => document.getElementById('ios-install-prompt').style.display = 'block', 2000);
 
-    // === 3. IndexedDB 資料庫 ===
-    const DB_NAME = "CraneCheckDB_V5"; // 升級版本號以避免舊資料衝突
-    const STORAGE_KEY = "CRANE_DRAFT_V5";
+    // === 3. IndexedDB 資料庫 (更新 DB 名稱以免與舊版衝突) ===
+    const DB_NAME = "CraneOpCheckDB_V1"; 
+    const STORAGE_KEY = "CRANE_OP_DRAFT";
     let db;
     const request = indexedDB.open(DB_NAME, 1);
     request.onupgradeneeded = (e) => { db = e.target.result; if(!db.objectStoreNames.contains("drafts")) db.createObjectStore("drafts", { keyPath: "id" }); };
@@ -276,43 +240,17 @@
         
         CHECK_CONFIG.forEach((config) => {
             let html = "";
-            
-            // A. 下拉選單類型
-            if(config.type === "selection") {
-                let optionsHtml = Object.keys(config.options).map(key => 
-                    `<option value="${key}">${config.options[key].label}</option>`
-                ).join('');
-                
-                html += `
-                <div class="select-box">
-                    <label style="font-size:1.1rem; color:#000;">${config.title}</label>
-                    <select id="${config.id}_select" onchange="handleSelectChange('${config.id}')" style="margin-bottom:15px; border:2px solid #0d6efd;">
-                        ${optionsHtml}
-                    </select>
-                    ${Object.keys(config.options).map(key => {
-                        return `<div id="${config.id}_group_${key}" class="sub-group-container" style="display:none;">
-                            ${config.options[key].items.map(item => createQuestionHtml(item)).join('')}
-                        </div>`;
-                    }).join('')}
-                </div>`;
-            } 
-            // B. 題組類型
-            else if (config.type === "group") {
+            if (config.type === "group") {
                 html += `
                 <div class="group-box">
                     <div class="group-title">${config.title}</div>
                     ${config.items.map(item => createQuestionHtml(item)).join('')}
                 </div>`;
             }
-            // C. 一般單題
-            else {
-                html += createQuestionHtml({id: config.id, title: config.title, image: config.image});
-            }
             container.innerHTML += html;
         });
     }
 
-    // 產生單一題目的 HTML (共用函數)
     function createQuestionHtml(item) {
         let illustrationHtml = "";
         if(item.image) {
@@ -341,18 +279,6 @@
                 <div class="preview-container"><img id="preview_${item.id}" class="preview-img"></div>
             </div>
         </div>`;
-    }
-
-    // 處理下拉選單切換
-    window.handleSelectChange = function(groupId) {
-        const select = document.getElementById(`${groupId}_select`);
-        const selectedValue = select.value;
-        // 隱藏該群組下所有子區塊
-        document.querySelectorAll(`[id^="${groupId}_group_"]`).forEach(el => el.style.display = 'none');
-        // 顯示選中的區塊
-        const target = document.getElementById(`${groupId}_group_${selectedValue}`);
-        if(target) target.style.display = 'block';
-        autoSave();
     }
 
     window.checkStatus = function(id) {
@@ -387,14 +313,8 @@
             main: document.getElementById('mainContractor').value,
             sub: document.getElementById('subContractor').value,
             insp: document.getElementById('inspectorName').value,
-            point: document.getElementById('liftingPoint').value,
-            selections: {}
+            point: document.getElementById('liftingPoint').value
         };
-        // 儲存下拉選單狀態
-        CHECK_CONFIG.filter(c => c.type === 'selection').forEach(c => {
-            const el = document.getElementById(`${c.id}_select`);
-            if(el) basicInfo.selections[c.id] = el.value;
-        });
 
         const radios = Array.from(document.querySelectorAll('input[type="radio"]:checked')).map(r => r.id);
         const notes = Array.from(document.querySelectorAll('input[type="text"][id^="note_"]')).reduce((acc, el) => ({...acc, [el.id]: el.value}), {});
@@ -415,13 +335,6 @@
                 document.getElementById('subContractor').value = data.basicInfo.sub || "";
                 document.getElementById('inspectorName').value = data.basicInfo.insp || "";
                 document.getElementById('liftingPoint').value = data.basicInfo.point || "";
-                // 恢復下拉選單並觸發顯示
-                if(data.basicInfo.selections) {
-                    Object.keys(data.basicInfo.selections).forEach(key => {
-                        const select = document.getElementById(`${key}_select`);
-                        if(select) { select.value = data.basicInfo.selections[key]; handleSelectChange(key); }
-                    });
-                }
             }
             if(data.radios) { data.radios.forEach(id => { const el = document.getElementById(id); if(el) { el.checked = true; const rowId = id.replace(/_(pass|fail)$/, ''); checkStatus(rowId); } }); }
             if(data.notes) Object.keys(data.notes).forEach(k => { const el = document.getElementById(k); if(el) el.value = data.notes[k]; });
@@ -432,14 +345,13 @@
 
     window.clearDraft = function() { if(confirm("確定要清除所有資料重填嗎？")) { db.transaction(["drafts"], "readwrite").objectStore("drafts").delete(STORAGE_KEY); location.reload(); } }
 
-    // === 7. 下載報告 (過濾不可見項目) ===
+    // === 7. 下載報告 ===
     window.downloadReport = function() {
         const basicFields = ['mainContractor', 'subContractor', 'inspectorName', 'liftingPoint', 'checkDate'];
         if(basicFields.some(id => !document.getElementById(id).value)) { alert("⚠️ 請填寫完整的「作業基本資料」！"); window.scrollTo(0,0); return; }
         if(isCanvasBlank()) { alert("⚠️ 請簽名！"); document.getElementById('sig-canvas').classList.add('sig-error'); document.getElementById('sig-section').scrollIntoView(); return; }
         
-        // 僅選取目前可見的題目 (過濾掉下拉選單未選中的)
-        const visibleRows = Array.from(document.querySelectorAll('.panel-row')).filter(row => row.offsetParent !== null);
+        const visibleRows = Array.from(document.querySelectorAll('.panel-row'));
         
         let errorCount = 0; let firstErrorRow = null;
         visibleRows.forEach(row => {
@@ -476,7 +388,7 @@
         const point = document.getElementById('liftingPoint').value;
         const checkDate = document.getElementById('checkDate').value;
         
-        const fullHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>起重機檢查報告</title>
+        const fullHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>起重機操作手自檢報告</title>
     <style>
         body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; padding: 40px; background: #fff; color: #000; margin: 0; }
         .container { max-width: 800px; margin: 0 auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -494,13 +406,13 @@
         .txt-pass { color: #198754; } .txt-fail { color: #dc3545; }
     </style></head><body>
     <div class="container">
-        <div class="report-header"><div class="report-title">🏗️ 起重機作業前自檢表</div></div>
+        <div class="report-header"><div class="report-title">🏗️ 起重機操作手作業前自檢報告</div></div>
         <div class="report-info-grid">
             <div><strong>日期：</strong> ${checkDate}</div>
             <div><strong>主承商：</strong> ${main}</div>
             <div><strong>次承商：</strong> ${sub}</div>
-            <div><strong>吊掛點位：</strong> ${point}</div>
-            <div><strong>檢查人員：</strong> ${insp}</div>
+            <div><strong>吊掛點/車號：</strong> ${point}</div>
+            <div><strong>操作人員：</strong> ${insp}</div>
         </div>
         <div class="report-section-title">檢查結果細項</div>
         <div>${reportItemsHtml}</div>
@@ -508,7 +420,7 @@
             總結：${failCount > 0 ? '<span style="color:red">異常 (' + failCount + ' 項) - 請立即改善</span>' : '<span style="color:green">全數合格 - 可開始作業</span>'}
         </div>
         <div class="report-footer">
-            <div class="report-sig-box"><img src="${canvas.toDataURL()}" class="report-sig-img"><div class="report-sig-line">檢查人員簽章</div></div>
+            <div class="report-sig-box"><img src="${canvas.toDataURL()}" class="report-sig-img"><div class="report-sig-line">操作人員簽章</div></div>
             <div class="report-sig-box"><div style="height:70px;"></div><div class="report-sig-line">工地主任/監工複核</div></div>
         </div>
     </div></body></html>`;
@@ -516,7 +428,7 @@
         const blob = new Blob([fullHtml], {type: "text/html;charset=utf-8"});
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `起重機檢查報告_${checkDate}_${point}.html`;
+        link.download = `起重機操作手檢查_${checkDate}_${point}.html`;
         link.click();
     }
 </script>
