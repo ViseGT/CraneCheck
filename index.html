@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>起重機操作手作業前自檢表</title>
+    <title>起重機/吊掛作業前聯合自檢表</title>
     
     <link rel="manifest" href="manifest.json">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="起重機操作手檢查">
+    <meta name="apple-mobile-web-app-title" content="起重吊掛檢查">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <meta name="theme-color" content="#2c3e50">
@@ -56,6 +56,11 @@
             color: #0d6efd; font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid #dee2e6; 
             padding-bottom: 8px; margin-bottom: 15px;
         }
+        /* 下拉選單題型樣式 */
+        .select-box {
+            border-left: 5px solid #fd7e14; background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
 
         .panel-row.completed { border-left-color: #198754; } 
         .panel-row.error { border-left-color: #dc3545; background-color: #fff8f8; }
@@ -100,6 +105,11 @@
             background: white; padding: 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             z-index: 2000; text-align: center;
         }
+        /* 角色標籤 */
+        .role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; color: white; }
+        .badge-op { background-color: #0d6efd; }
+        .badge-rig { background-color: #fd7e14; }
+        .badge-all { background-color: #6610f2; }
     </style>
 </head>
 <body>
@@ -113,7 +123,7 @@
     <form id="checkForm">
         <div class="card-box">
             <div class="app-header">
-                <div class="app-title">🏗️ 起重機操作手作業前自檢</div>
+                <div class="app-title">🏗️ 起重吊掛作業前聯合自檢</div>
                 <small id="autoSaveStatus" style="color:#198754; display:none; font-weight:bold;">✅ 已自動儲存</small>
             </div>
             <div class="section-title">1. 作業基本資料 (必填)</div>
@@ -125,8 +135,17 @@
                 <div class="col-6"><label>2. 次承商 Sub Contractor</label><input type="text" id="subContractor" placeholder="輸入次承商..." oninput="autoSave()"></div>
             </div>
             <div class="row">
-                <div class="col-6"><label>3. 操作人員 Operator</label><input type="text" id="inspectorName" placeholder="輸入姓名..." oninput="autoSave()"></div>
-                <div class="col-6"><label>4. 吊掛點位/車號</label><input type="text" id="liftingPoint" placeholder="輸入點位或車號..." oninput="autoSave()"></div>
+                <div class="col-12">
+                    <label style="color:#d63384;">3. 作業身分 Role (決定檢查項目) ★</label>
+                    <select id="userRole" onchange="renderPanels(); autoSave();" style="border: 2px solid #d63384;">
+                        <option value="">-- 請選擇身分 --</option>
+                        <option value="operator">起重機操作手 (Operator)</option>
+                        <option value="rigger">吊掛指揮手 (Rigger)</option>
+                        <option value="both">操作及吊掛手 (兩者兼任)</option>
+                    </select>
+                </div>
+                <div class="col-6"><label>4. 檢查人員姓名 Name</label><input type="text" id="inspectorName" placeholder="輸入姓名..." oninput="autoSave()"></div>
+                <div class="col-6"><label>5. 吊掛點位/車號</label><input type="text" id="liftingPoint" placeholder="輸入點位..." oninput="autoSave()"></div>
             </div>
         </div>
 
@@ -150,47 +169,100 @@
 </div>
 
 <script>
-    // === 1. 資料設定 (已更新為起重機操作手專用版本) ===
+    // === 1. 整合後的資料設定 (包含 Role 屬性) ===
     const CHECK_CONFIG = [
+        // --- 通用必填題 (所有人都看得到) ---
+        {
+            type: "simple",
+            id: "global_license",
+            title: "【一機三證】吊掛作業開始前，是否已確認具備一機三證 (起重機證、操作手證、吊掛手證)？",
+            image: "",
+            role: "all" // 標記為全部可見
+        },
+
+        // --- 起重機操作手題目 (Code 1) ---
         {
             type: "group",
-            id: "cat_part1",
-            title: "A. 前置準備與機身設定",
+            id: "op_part1",
+            title: "A. 操作手 - 前置準備與設定",
+            role: "operator", // 標記為操作手
             items: [
                 { id: "op_01", title: "【指揮系統】是否已確認唯一的專責指揮手是誰，且雙方溝通的手勢或無線電信號是否已約定統一？", image: "" },
                 { id: "op_02", title: "【文書許可】是否已確認施工單/派工單內容無誤，且您是否已充分了解今日作業的潛在危害與風險？", image: "" },
-                { id: "op_03", title: "【每日自檢】是否已確實填寫每日自檢表，並確認過捲預防裝置、過負荷限制器、制動器(煞車)、鋼索及吊鉤防脫片功能是否皆正常？", image: "" },
-                { id: "op_04", title: "【荷重確認】是否已查閱起重機荷重表，並確認本次吊掛物重量是否確實小於當下工況的額定荷重？", image: "" },
-                { id: "op_05", title: "【區域管制】是否已確認作業半徑及迴轉範圍內完成管制，且吊舉路徑下方是否已保持淨空、無人員逗留？", image: "" },
-                { id: "op_06", title: "【機身穩定】外伸撐座是否已依規定完全伸出，且支撐地面是否堅固並已確實鋪墊枕木或鐵板？", image: "" }
+                { id: "op_03", title: "【每日自檢】是否已確實填寫每日自檢表，並確認過捲預防裝置、過負荷限制器、制動器及防脫片功能正常？", image: "" },
+                { id: "op_04", title: "【荷重確認】是否已查閱起重機荷重表，並確認本次吊掛物重量確實小於當下工況的額定荷重？", image: "" },
+                { id: "op_05", title: "【區域管制】是否已確認作業半徑及迴轉範圍內完成管制，且吊舉路徑下方已保持淨空？", image: "" },
+                { id: "op_06", title: "【機身穩定】外伸撐座是否已依規定完全伸出，且支撐地面堅固並已確實鋪墊枕木或鐵板？", image: "" }
             ]
         },
         {
             type: "group",
-            id: "cat_part2",
-            title: "B. 操作測試與運行控制",
+            id: "op_part2",
+            title: "B. 操作手 - 測試與運行控制",
+            role: "operator",
             items: [
-                { id: "op_07", title: "【極限測試】(防止撞擊天花板) 在掛上重物之前，是否已先進行空載測試，並實際確認上捲預防裝置（極限開關）是否能有效讓吊鉤自動停止？", image: "" },
-                { id: "op_08", title: "【試吊確認】(防止煞車失效) 在起吊離地 10~20 公分時，是否有執行「暫停動作」，並確認制動器（煞車）是否能穩固抓住負載、無任何下滑（漂移）現象？", image: "" },
-                { id: "op_09", title: "【防擺控制】(防止撞擊機台) 操作時是否已確認吊鉤位於負載重心的正上方（無歪拉斜吊），以確保起吊瞬間負載是否平穩上升、無劇烈擺盪？", image: "" },
-                { id: "op_13", title: "【緊急應變】(防止災難擴大) 您是否清楚緊急停止按鈕（E-Stop）的確切位置，且是否確認該按鈕功能正常、按下後能切斷所有動力？", image: "" }
+                { id: "op_07", title: "【極限測試】(防止撞天花板) 在掛上重物前，是否已先進行空載測試，確認上捲預防裝置(極限開關)有效？", image: "" },
+                { id: "op_08", title: "【試吊確認】(防止煞車失效) 起吊離地 10~20 公分時，是否執行「暫停動作」，確認制動器無下滑現象？", image: "" },
+                { id: "op_09", title: "【防擺控制】(防止撞擊) 操作時是否確認吊鉤位於負載重心正上方(無歪拉斜吊)，確保起吊平穩？", image: "" },
+                { id: "op_13", title: "【緊急應變】是否清楚緊急停止按鈕(E-Stop)位置，且確認功能正常？", image: "" }
             ]
+        },
+
+        // --- 吊掛指揮手題目 (Code 2) ---
+        {
+            type: "selection", // 下拉選單題型
+            id: "rig_part1",
+            title: "C. 吊掛手 - 吊掛索具檢點 (請選擇)",
+            role: "rigger", // 標記為吊掛手
+            options: {
+                "none": { label: "-- 請選擇索具類型 --", items: [] },
+                "wire": { 
+                    label: "1. 鋼索", 
+                    items: [
+                        { id: "w1", title: "1-1. 鋼索斷絲是否無達到10%素線截斷?", image: "1-1.png" },
+                        { id: "w2", title: "1-2. 鋼索磨損與變形是否無達到直徑減少7%?", image: "1-2.png" }
+                    ]
+                },
+                "chain": { 
+                    label: "2. 吊鏈", 
+                    items: [
+                        { id: "c1", title: "1-1. 吊鏈是否無延伸長度達5%或斷面直徑減少10%?", image: "2-1.png" },
+                        { id: "c2", title: "1-2. 吊鏈是否無龜裂?", image: "2-2.png" }
+                    ]
+                },
+                "fiber": { 
+                    label: "3. 纖維吊帶/繩", 
+                    items: [
+                        { id: "f1", title: "1-1. 纖維吊帶/繩是否無切痕或破損?", image: "3-1.png" },
+                        { id: "f2", title: "1-2. 外觀標示是否清楚辨識?", image: "" }
+                    ]
+                }
+            }
         },
         {
             type: "group",
-            id: "cat_part3",
-            title: "C. 吊掛技術與環境防護",
+            id: "rig_part2",
+            title: "D. 吊掛手 - 吊鉤與作業前確認",
+            role: "rigger",
             items: [
-                { id: "op_10", title: "【銳角防護】(防止吊帶割斷) 吊掛物若有銳利邊緣或稜角（如鋼板、機台底座），是否已確實使用護角（軟墊）或防切割套進行保護？", image: "" },
-                { id: "op_11", title: "【吊掛角度】(防止張力過大) 是否已確認吊索之間的夾角位於安全範圍內（建議 60 度以上），且吊索長度是否足夠避免擠壓負載？", image: "" },
-                { id: "op_12", title: "【防滑確認】(針對鋼筋/散狀物) 若是吊掛鬆散束狀物（如管件、鋼筋），是否已採用「雙圈束頸」綁法，且是否確認負載已被牢固抓緊、無滑出風險？", image: "" },
-                { id: "op_14", title: "【環境因子】(戶外/夜間作業) 作業現場的光線照明是否充足，且當下風速是否已確認在起重機原廠規範的安全作業範圍內？", image: "" },
-                { id: "op_15", title: "【個人防護】(最後一道防線) 您與相關作業人員是否皆已正確穿戴符合規定的個人防護具（如安全帽、安全鞋、反光背心）？", image: "" }
+                { id: "h1", title: "【吊鉤】吊掛鉤頭插銷是否完全插入，且無變形開口？", image: "2.2.png" },
+                { id: "p1", title: "【指揮資格】現場是否已指派專責指揮人員，且具備合格證照？", image: "" },
+                { id: "p4", title: "【荷重確認】是否已確認吊掛物重量在額定荷重範圍內，且吊具強度足夠？", image: "" },
+                { id: "p5", title: "【區域管制】吊掛作業區域是否已圍設警示帶，且路徑下方淨空？", image: "" },
+                { id: "op_10", title: "【銳角防護】吊掛物若有銳利邊緣，是否已使用護角或防切割套？", image: "" },
+                { id: "op_12", title: "【防滑確認】若吊掛散狀物，是否已採用「雙圈束頸」綁法並確認牢固？", image: "" }
             ]
+        },
+        {
+            type: "simple",
+            id: "rig_333",
+            title: "E. 吊掛作業前是否完成試吊333運動？",
+            role: "rigger",
+            image: "3.png"
         }
     ];
 
-    // === 2. Service Worker 與 iOS 判斷 ===
+    // === 2. Service Worker 與 iOS ===
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed', err)); });
     }
@@ -198,15 +270,15 @@
     const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
     if (isIos() && !isInStandaloneMode()) setTimeout(() => document.getElementById('ios-install-prompt').style.display = 'block', 2000);
 
-    // === 3. IndexedDB 資料庫 (更新 DB 名稱以免與舊版衝突) ===
-    const DB_NAME = "CraneOpCheckDB_V1"; 
-    const STORAGE_KEY = "CRANE_OP_DRAFT";
+    // === 3. IndexedDB 資料庫 ===
+    const DB_NAME = "UnifiedCheckDB_V1"; 
+    const STORAGE_KEY = "UNIFIED_DRAFT";
     let db;
     const request = indexedDB.open(DB_NAME, 1);
     request.onupgradeneeded = (e) => { db = e.target.result; if(!db.objectStoreNames.contains("drafts")) db.createObjectStore("drafts", { keyPath: "id" }); };
     request.onsuccess = (e) => { db = e.target.result; initPage(); };
 
-    // === 4. 簽名板邏輯 ===
+    // === 4. 簽名板 ===
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
@@ -225,30 +297,87 @@
     function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); autoSave(); }
     function isCanvasBlank() { const blank=document.createElement('canvas'); blank.width=canvas.width; blank.height=canvas.height; return canvas.toDataURL()===blank.toDataURL(); }
 
-    // === 5. 頁面初始化與渲染 ===
+    // === 5. 頁面初始化與渲染 (核心邏輯修改) ===
     function initPage() {
         const now = new Date();
         document.getElementById('checkDate').value = now.toISOString().split('T')[0];
-        renderPanels();
+        // 初始暫時不渲染，等 Load DB 後根據 Role 渲染，若無 Role 則清空
         loadDraftFromDB();
         setTimeout(resizeCanvas, 100);
     }
 
+    // 核心渲染函數：根據下拉選單決定顯示哪些題目
     function renderPanels() {
         const container = document.getElementById('panelList'); 
+        const userRole = document.getElementById('userRole').value;
+        
+        // 如果未選擇身分，顯示提示
+        if(!userRole) {
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">請先於上方「作業身分」選擇您的角色<br>以載入對應檢查表。</div>`;
+            return;
+        }
+
         container.innerHTML = `<div class="section-title">2. 檢查項目 Checklist</div>`;
         
-        CHECK_CONFIG.forEach((config) => {
+        // 過濾邏輯
+        const filteredConfig = CHECK_CONFIG.filter(config => {
+            if (config.role === 'all') return true; // 一機三證永遠顯示
+            if (userRole === 'both') return true; // 兩者兼任顯示全部
+            return config.role === userRole; // 否則只顯示對應角色
+        });
+        
+        filteredConfig.forEach((config) => {
             let html = "";
-            if (config.type === "group") {
+            let roleBadge = "";
+            
+            // 標籤顯示 UI 優化
+            if(config.role === 'all') roleBadge = `<span class="role-badge badge-all">全體通用</span>`;
+            else if(config.role === 'operator') roleBadge = `<span class="role-badge badge-op">操作手</span>`;
+            else if(config.role === 'rigger') roleBadge = `<span class="role-badge badge-rig">吊掛手</span>`;
+
+            // A. 下拉選單題型 (索具)
+            if(config.type === "selection") {
+                let optionsHtml = Object.keys(config.options).map(key => 
+                    `<option value="${key}">${config.options[key].label}</option>`
+                ).join('');
+                
+                html += `
+                <div class="select-box">
+                    ${roleBadge}
+                    <label style="font-size:1.1rem; color:#000;">${config.title}</label>
+                    <select id="${config.id}_select" onchange="handleSelectChange('${config.id}')" style="margin-bottom:15px; border:2px solid #0d6efd;">
+                        ${optionsHtml}
+                    </select>
+                    ${Object.keys(config.options).map(key => {
+                        return `<div id="${config.id}_group_${key}" class="sub-group-container" style="display:none;">
+                            ${config.options[key].items.map(item => createQuestionHtml(item)).join('')}
+                        </div>`;
+                    }).join('')}
+                </div>`;
+            } 
+            // B. 題組類型
+            else if (config.type === "group") {
                 html += `
                 <div class="group-box">
+                    ${roleBadge}
                     <div class="group-title">${config.title}</div>
                     ${config.items.map(item => createQuestionHtml(item)).join('')}
                 </div>`;
             }
+            // C. 一般單題
+            else {
+                html += `<div>${roleBadge} ${createQuestionHtml({id: config.id, title: config.title, image: config.image})}</div>`;
+            }
             container.innerHTML += html;
         });
+        
+        // 重新綁定事件後，若有已存資料需恢復勾選狀態 (因為 DOM 重建了)
+        // 但由於 autoSave 會存，我們依賴 loadDraft 再次填充狀態，或者這裡僅渲染結構
+        // 為了流暢體驗，我們需要從 DB 或記憶體中恢復狀態。
+        // 這裡簡單處理：如果是因為 onchange 觸發，不需要重載值(因為是新表格)，但如果是 Load 觸發，會在 Load 函數處理。
+        // 若使用者在填寫途中切換角色，會觸發重新渲染，已填寫的通用欄位值還在 DOM (若 ID 相同)，但因為 innerHTML 重寫會消失。
+        // 因此建議切換角色視為重置表格，或者在 render 後補填。
+        restoreValuesAfterRender();
     }
 
     function createQuestionHtml(item) {
@@ -281,6 +410,15 @@
         </div>`;
     }
 
+    window.handleSelectChange = function(groupId) {
+        const select = document.getElementById(`${groupId}_select`);
+        const selectedValue = select.value;
+        document.querySelectorAll(`[id^="${groupId}_group_"]`).forEach(el => el.style.display = 'none');
+        const target = document.getElementById(`${groupId}_group_${selectedValue}`);
+        if(target) target.style.display = 'block';
+        autoSave();
+    }
+
     window.checkStatus = function(id) {
         const row = document.getElementById(`row_${id}`);
         const pass = document.getElementById(`${id}_pass`).checked;
@@ -303,6 +441,7 @@
     }
 
     // === 6. 自動儲存與讀取 ===
+    let savedDataCache = null; // 用於暫存資料以便切換角色後回填
     let saveTimer; 
     window.autoSave = function() { clearTimeout(saveTimer); saveTimer = setTimeout(saveToDB, 500); }
     
@@ -312,14 +451,27 @@
             date: document.getElementById('checkDate').value,
             main: document.getElementById('mainContractor').value,
             sub: document.getElementById('subContractor').value,
+            role: document.getElementById('userRole').value, // 儲存角色
             insp: document.getElementById('inspectorName').value,
-            point: document.getElementById('liftingPoint').value
+            point: document.getElementById('liftingPoint').value,
+            selections: {}
         };
+        // 儲存下拉選單狀態
+        CHECK_CONFIG.filter(c => c.type === 'selection').forEach(c => {
+            const el = document.getElementById(`${c.id}_select`);
+            if(el) basicInfo.selections[c.id] = el.value;
+        });
 
+        // 收集所有可能的輸入 (即使現在不可見，如果切換回來也要盡量保留，但簡化起見只存目前 DOM)
+        // 為了支援切換角色不丟失資料，這裡應該存記憶體變數，但實務上重刷 DOM 會丟失 listener。
+        // 我們這裡只存目前 DOM 有的東西。
         const radios = Array.from(document.querySelectorAll('input[type="radio"]:checked')).map(r => r.id);
         const notes = Array.from(document.querySelectorAll('input[type="text"][id^="note_"]')).reduce((acc, el) => ({...acc, [el.id]: el.value}), {});
         const images = Array.from(document.querySelectorAll('.preview-img')).reduce((acc, img) => (img.src && img.src.startsWith('data:') ? {...acc, [img.id]: img.src} : acc), {});
         
+        // 更新 Cache
+        savedDataCache = { radios, notes, images };
+
         const data = { id: STORAGE_KEY, basicInfo: basicInfo, radios: radios, notes: notes, images: images, signature: isCanvasBlank() ? null : canvas.toDataURL() };
         const tx = db.transaction(["drafts"], "readwrite"); tx.objectStore("drafts").put(data);
         tx.oncomplete = () => { const status = document.getElementById('autoSaveStatus'); status.style.display='inline'; setTimeout(()=> status.style.display='none', 2000); };
@@ -329,29 +481,71 @@
         if(!db) return;
         db.transaction(["drafts"]).objectStore("drafts").get(STORAGE_KEY).onsuccess = (e) => {
             const data = e.target.result; if(!data) return;
+            
+            // 1. 恢復基本資料與角色
             if(data.basicInfo) {
                 document.getElementById('checkDate').value = data.basicInfo.date || "";
                 document.getElementById('mainContractor').value = data.basicInfo.main || "";
                 document.getElementById('subContractor').value = data.basicInfo.sub || "";
                 document.getElementById('inspectorName').value = data.basicInfo.insp || "";
                 document.getElementById('liftingPoint').value = data.basicInfo.point || "";
+                document.getElementById('userRole').value = data.basicInfo.role || "";
             }
-            if(data.radios) { data.radios.forEach(id => { const el = document.getElementById(id); if(el) { el.checked = true; const rowId = id.replace(/_(pass|fail)$/, ''); checkStatus(rowId); } }); }
-            if(data.notes) Object.keys(data.notes).forEach(k => { const el = document.getElementById(k); if(el) el.value = data.notes[k]; });
-            if(data.images) Object.keys(data.images).forEach(k => { const img = document.getElementById(k); if(img) { img.src = data.images[k]; img.style.display = 'inline-block'; } });
+
+            // 2. 設置 Cache 並渲染畫面 (這會清空 DOM)
+            savedDataCache = { radios: data.radios || [], notes: data.notes || {}, images: data.images || {} };
+            renderPanels(); 
+
+            // 3. 恢復選單選擇 (需在 render 之後)
+            if(data.basicInfo && data.basicInfo.selections) {
+                Object.keys(data.basicInfo.selections).forEach(key => {
+                    const select = document.getElementById(`${key}_select`);
+                    if(select) { select.value = data.basicInfo.selections[key]; handleSelectChange(key); }
+                });
+            }
+
+            // 4. 恢復內容 (由 restoreValuesAfterRender 統一處理)
+            restoreValuesAfterRender();
+
             if(data.signature) { const i = new Image(); i.src = data.signature; i.onload = () => ctx.drawImage(i,0,0, canvas.width, canvas.height); }
         };
+    }
+
+    function restoreValuesAfterRender() {
+        if(!savedDataCache) return;
+        // 恢復 Radio
+        if(savedDataCache.radios) {
+            savedDataCache.radios.forEach(id => { 
+                const el = document.getElementById(id); 
+                if(el) { el.checked = true; const rowId = id.replace(/_(pass|fail)$/, ''); checkStatus(rowId); } 
+            });
+        }
+        // 恢復 Note
+        if(savedDataCache.notes) {
+            Object.keys(savedDataCache.notes).forEach(k => { 
+                const el = document.getElementById(k); 
+                if(el) el.value = savedDataCache.notes[k]; 
+            });
+        }
+        // 恢復圖片
+        if(savedDataCache.images) {
+            Object.keys(savedDataCache.images).forEach(k => { 
+                const img = document.getElementById(k); 
+                if(img) { img.src = savedDataCache.images[k]; img.style.display = 'inline-block'; } 
+            });
+        }
     }
 
     window.clearDraft = function() { if(confirm("確定要清除所有資料重填嗎？")) { db.transaction(["drafts"], "readwrite").objectStore("drafts").delete(STORAGE_KEY); location.reload(); } }
 
     // === 7. 下載報告 ===
     window.downloadReport = function() {
-        const basicFields = ['mainContractor', 'subContractor', 'inspectorName', 'liftingPoint', 'checkDate'];
+        const basicFields = ['mainContractor', 'userRole', 'inspectorName', 'liftingPoint', 'checkDate'];
         if(basicFields.some(id => !document.getElementById(id).value)) { alert("⚠️ 請填寫完整的「作業基本資料」！"); window.scrollTo(0,0); return; }
         if(isCanvasBlank()) { alert("⚠️ 請簽名！"); document.getElementById('sig-canvas').classList.add('sig-error'); document.getElementById('sig-section').scrollIntoView(); return; }
         
-        const visibleRows = Array.from(document.querySelectorAll('.panel-row'));
+        // 僅選取目前可見的題目
+        const visibleRows = Array.from(document.querySelectorAll('.panel-row')).filter(row => row.offsetParent !== null);
         
         let errorCount = 0; let firstErrorRow = null;
         visibleRows.forEach(row => {
@@ -385,10 +579,11 @@
         const main = document.getElementById('mainContractor').value;
         const sub = document.getElementById('subContractor').value;
         const insp = document.getElementById('inspectorName').value;
+        const role = document.getElementById('userRole').options[document.getElementById('userRole').selectedIndex].text;
         const point = document.getElementById('liftingPoint').value;
         const checkDate = document.getElementById('checkDate').value;
         
-        const fullHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>起重機操作手自檢報告</title>
+        const fullHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>起重吊掛檢查報告</title>
     <style>
         body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; padding: 40px; background: #fff; color: #000; margin: 0; }
         .container { max-width: 800px; margin: 0 auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -406,21 +601,22 @@
         .txt-pass { color: #198754; } .txt-fail { color: #dc3545; }
     </style></head><body>
     <div class="container">
-        <div class="report-header"><div class="report-title">🏗️ 起重機操作手作業前自檢報告</div></div>
+        <div class="report-header"><div class="report-title">🏗️ 起重吊掛作業前聯合自檢報告</div></div>
         <div class="report-info-grid">
             <div><strong>日期：</strong> ${checkDate}</div>
+            <div><strong>作業身分：</strong> ${role}</div>
             <div><strong>主承商：</strong> ${main}</div>
             <div><strong>次承商：</strong> ${sub}</div>
-            <div><strong>吊掛點/車號：</strong> ${point}</div>
-            <div><strong>操作人員：</strong> ${insp}</div>
+            <div><strong>吊掛點位：</strong> ${point}</div>
+            <div><strong>檢查人員：</strong> ${insp}</div>
         </div>
-        <div class="report-section-title">檢查結果細項</div>
+        <div class="report-section-title">檢查結果細項 (${role})</div>
         <div>${reportItemsHtml}</div>
         <div style="margin-top:20px; font-size:18px; font-weight:bold; border-top:2px solid #ccc; padding-top:10px;">
             總結：${failCount > 0 ? '<span style="color:red">異常 (' + failCount + ' 項) - 請立即改善</span>' : '<span style="color:green">全數合格 - 可開始作業</span>'}
         </div>
         <div class="report-footer">
-            <div class="report-sig-box"><img src="${canvas.toDataURL()}" class="report-sig-img"><div class="report-sig-line">操作人員簽章</div></div>
+            <div class="report-sig-box"><img src="${canvas.toDataURL()}" class="report-sig-img"><div class="report-sig-line">檢查人員簽章</div></div>
             <div class="report-sig-box"><div style="height:70px;"></div><div class="report-sig-line">工地主任/監工複核</div></div>
         </div>
     </div></body></html>`;
@@ -428,7 +624,7 @@
         const blob = new Blob([fullHtml], {type: "text/html;charset=utf-8"});
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `起重機操作手檢查_${checkDate}_${point}.html`;
+        link.download = `起重吊掛檢查_${checkDate}_${insp}.html`;
         link.click();
     }
 </script>
