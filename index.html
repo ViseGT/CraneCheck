@@ -12,104 +12,183 @@
     <meta name="apple-mobile-web-app-title" content="起重吊掛檢查">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#ffffff">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
-        /* === 全局樣式 === */
+        /* === 正式文件風格 CSS === */
+        
+        /* 1. 背景與邊距：模擬文件置於桌面上 */
         body { 
-            padding: 15px; 
+            background-color: #555; /* 深灰背景襯托文件 */
+            padding: 20px 10px; /* 留出邊距給外框 */
             padding-bottom: 120px; 
-            background-color: #e9ecef; 
-            font-family: -apple-system, "Microsoft JhengHei", "Heiti TC", sans-serif; 
-            color: #333; 
-            overscroll-behavior-y: none;
+            font-family: "Microsoft JhengHei", "Heiti TC", serif; /* 改用襯線或正黑體 */
+            color: #000;
         }
         
-        #app-container { max-width: 800px; margin: 0 auto; }
-        
-        .card-box { 
-            background: white; padding: 20px; border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; position: relative;
+        /* 2. 主容器：模擬 A4 紙張與雙色邊框 */
+        #app-container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background-color: #fff;
+            padding: 25px;
+            
+            /* 關鍵：外黑內紅邊框 */
+            border: 3px solid #cc0000; /* 內框：紅色 */
+            outline: 4px solid #000000; /* 外框：黑色 */
+            outline-offset: 3px; /* 讓內外框之間有一點白隙，若想緊貼可設為0 */
+            
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* 文件立體陰影 */
         }
-        .app-header { text-align: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
-        .app-title { font-size: 1.5rem; font-weight: 900; color: #2c3e50; }
-        .section-title { font-size: 1.1rem; font-weight: bold; color: #0d6efd; margin-bottom: 15px; border-left: 4px solid #0d6efd; padding-left: 10px;}
-        label { font-weight: bold; color: #0d6efd; margin-bottom: 5px; display: block; font-size: 0.95rem; }
+        
+        /* 3. 標題區塊 */
+        .app-header { 
+            text-align: center; 
+            margin-bottom: 25px; 
+            padding-bottom: 15px; 
+            border-bottom: 3px double #000; /* 雙線底線更像公文 */
+        }
+        .app-title { 
+            font-size: 1.8rem; 
+            font-weight: 900; 
+            color: #000; 
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .doc-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: normal;
+        }
+
+        /* 4. 區塊標題 */
+        .section-title { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            color: #fff; 
+            background-color: #000; /* 黑底白字標題 */
+            padding: 5px 10px;
+            margin-bottom: 15px; 
+            margin-top: 20px;
+            border-left: 5px solid #cc0000; /* 紅色點綴 */
+        }
+
+        /* 5. 輸入欄位：方正風格 */
+        label { 
+            font-weight: bold; 
+            color: #000; 
+            margin-bottom: 3px; 
+            display: block; 
+            font-size: 0.95rem; 
+        }
         input[type="text"], input[type="date"], select { 
-            width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 8px; 
-            font-size: 16px; margin-bottom: 15px; background: #fff; 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid #000; /* 實心黑框 */
+            border-radius: 0; /* 移除圓角 */
+            font-size: 16px; 
+            margin-bottom: 15px; 
+            background: #fff; 
         }
-        
-        /* 檢查項目樣式 */
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            outline: 2px solid #cc0000;
+            border-color: #cc0000;
+        }
+        /* 必填與身分選擇強調 */
+        .highlight-label { color: #cc0000 !important; font-weight: 900; }
+        .highlight-input { border: 2px solid #cc0000 !important; background-color: #fffafa !important; }
+
+        /* 6. 檢查項目列表：表格化 */
         .panel-row { 
-            background: white; margin-bottom: 15px; padding: 15px; border-radius: 12px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 6px solid #ccc; 
-            transition: all 0.3s;
+            background: white; 
+            margin-bottom: 0; 
+            padding: 15px; 
+            border-bottom: 1px dashed #999; /* 分隔線 */
+            border-radius: 0;
+            transition: background 0.2s;
         }
-        /* 題組樣式 */
-        .group-box {
-            background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 12px; margin-bottom: 20px;
+        .panel-row:last-child { border-bottom: none; }
+        
+        /* 題組容器 */
+        .group-box, .select-box {
+            background: #fff; 
+            border: 2px solid #000; /* 黑框包裹 */
+            padding: 0; 
+            border-radius: 0; 
+            margin-bottom: 25px;
         }
         .group-title {
-            color: #0d6efd; font-weight: bold; font-size: 1.1rem; border-bottom: 2px solid #dee2e6; 
-            padding-bottom: 8px; margin-bottom: 15px;
+            background: #eee;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #000;
+            padding: 10px 15px;
+            margin-bottom: 0;
         }
-        /* 下拉選單題型樣式 */
-        .select-box {
-            border-left: 5px solid #fd7e14; background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+        .select-box { border-color: #cc0000; } /* 下拉選單區塊用紅框區分 */
 
-        .panel-row.completed { border-left-color: #198754; } 
-        .panel-row.error { border-left-color: #dc3545; background-color: #fff8f8; }
-        .item-title { font-weight: bold; font-size: 1.1rem; color: #222; margin-bottom: 10px; line-height: 1.4; }
+        /* 狀態顏色 */
+        .panel-row.completed { background-color: #f0fff4; border-left: 5px solid #198754; } 
+        .panel-row.error { background-color: #fff5f5; border-left: 5px solid #dc3545; }
+        .item-title { font-weight: bold; font-size: 1.05rem; color: #000; margin-bottom: 10px; line-height: 1.4; }
 
-        .illustration-container {
-            text-align: center; margin-bottom: 15px; padding: 10px;
-            background-color: #f8f9fa; border-radius: 8px; border: 2px dashed #dee2e6;
-        }
-        .illustration-img {
-            max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 4px; border: 1px solid #eee;
-        }
-
-        .btn-check-group { display: flex; gap: 5px; width: 100%; }
-        .btn-check-group input { display: none; }
+        /* 7. 按鈕樣式：方正實心 */
+        .btn-check-group { display: flex; gap: 0; width: 100%; border: 1px solid #000; }
         .btn-check-label { 
-            flex: 1; text-align: center; padding: 12px; border: 1px solid #ced4da; 
-            border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; 
-            background: #fff; color: #666; transition: 0.2s;
+            flex: 1; text-align: center; padding: 10px; 
+            border: none; border-right: 1px solid #000;
+            border-radius: 0; cursor: pointer; font-size: 1rem; font-weight: bold; 
+            background: #fff; color: #000; transition: 0.2s;
         }
-        .btn-check-pass:checked + label { background: #198754; color: white; border-color: #198754; }
-        .btn-check-fail:checked + label { background: #dc3545; color: white; border-color: #dc3545; }
-        .preview-container { text-align: center; margin-top: 10px; }
-        .preview-img { max-width: 100%; height: 200px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; display: none; margin-top: 5px; }
+        .btn-check-label:last-child { border-right: none; }
         
-        .sig-wrapper { 
-            width: 100%; height: 180px; border: 2px dashed #bbb; border-radius: 8px; 
-            background: #fff; touch-action: none; position: relative;
+        .btn-check-pass:checked + label { background: #000; color: #fff; } /* 選中變黑底白字 */
+        /* 若要維持合格綠/異常紅，可保留下方設定，若要極致黑白可刪除 */
+        .btn-check-pass:checked + label { background: #198754; color: white; }
+        .btn-check-fail:checked + label { background: #dc3545; color: white; }
+
+        /* 8. 圖片與簽名 */
+        .illustration-container {
+            text-align: center; margin-bottom: 15px; padding: 5px;
+            border: 1px solid #000; background: #fff;
         }
-        canvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
+        .illustration-img { max-width: 100%; max-height: 200px; object-fit: contain; }
+
+        .sig-wrapper { 
+            width: 100%; height: 180px; 
+            border: 2px solid #000; /* 簽名框改實線 */
+            border-radius: 0; 
+            background: #fff; position: relative;
+        }
         .sig-error { border-color: #dc3545; background: #fff5f5; }
+
+        /* 9. 懸浮按鈕 (保持功能性，但稍微調整顏色) */
         .fab-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; align-items: flex-end; }
         .btn-float { 
-            padding: 12px 20px; border-radius: 50px; color: white; font-weight: bold; border: none; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; min-width: 120px; font-size: 1rem;
+            padding: 12px 20px; border-radius: 5px; /* 稍微方一點 */
+            color: white; font-weight: bold; border: 2px solid #fff; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); cursor: pointer; min-width: 120px; font-size: 1rem;
         }
-        .btn-main { background: linear-gradient(135deg, #0d6efd, #0b5ed7); }
-        .btn-warn { background: linear-gradient(135deg, #dc3545, #b02a37); font-size: 0.9rem; min-width: 100px; }
+        .btn-main { background: #000; }
+        .btn-warn { background: #cc0000; font-size: 0.9rem; min-width: 100px; }
         
+        /* 角色標籤 */
+        .role-badge { display: inline-block; padding: 4px 8px; border: 1px solid #000; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; color: #000; background: #fff; }
+        .badge-op { border-color: #0d6efd; color: #0d6efd; }
+        .badge-rig { border-color: #fd7e14; color: #fd7e14; }
+        .badge-all { border-color: #6610f2; color: #6610f2; }
+
+        /* 預覽圖樣式 */
+        .preview-img { max-width: 100%; height: 150px; border: 1px solid #000; display: none; margin-top: 5px; }
+
         #ios-install-prompt {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
             background: white; padding: 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 2000; text-align: center;
+            z-index: 2000; text-align: center; border-top: 4px solid #cc0000;
         }
-        /* 角色標籤 */
-        .role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; color: white; }
-        .badge-op { background-color: #0d6efd; }
-        .badge-rig { background-color: #fd7e14; }
-        .badge-all { background-color: #6610f2; }
     </style>
 </head>
 <body>
@@ -119,45 +198,47 @@
     <button type="button" class="btn-float btn-warn" onclick="clearDraft()">🗑️ 清除重填</button>
 </div>
 
-<div class="container" id="app-container">
+<div id="app-container">
     <form id="checkForm">
-        <div class="card-box">
-            <div class="app-header">
-                <div class="app-title">🏗️ 起重吊掛作業前聯合自檢</div>
-                <small id="autoSaveStatus" style="color:#198754; display:none; font-weight:bold;">✅ 已自動儲存</small>
+        <div class="app-header">
+            <div class="app-title">🏗️ 起重吊掛作業前聯合自檢</div>
+            <div class="doc-subtitle">CRANE & RIGGING PRE-OPERATION CHECKLIST</div>
+            <div style="margin-top:5px;">
+                <small id="autoSaveStatus" style="color:#198754; display:none; font-weight:bold; border:1px solid #198754; padding:2px 5px;">✅ 資料已自動存檔</small>
             </div>
-            <div class="section-title">1. 作業基本資料 (必填)</div>
-            <div class="row">
-                <div class="col-12"><label>檢查日期 Date</label><input type="date" id="checkDate"></div>
+        </div>
+
+        <div class="section-title">1. 作業基本資料 (BASIC INFO)</div>
+        <div class="row">
+            <div class="col-12"><label>檢查日期 Date</label><input type="date" id="checkDate"></div>
+        </div>
+        <div class="row">
+            <div class="col-6"><label>1. 主承商 Main Contractor</label><input type="text" id="mainContractor" oninput="autoSave()"></div>
+            <div class="col-6"><label>2. 次承商 Sub Contractor</label><input type="text" id="subContractor" oninput="autoSave()"></div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <label class="highlight-label">3. 作業身分 Role (決定檢查項目) ★</label>
+                <select id="userRole" class="highlight-input" onchange="renderPanels(); autoSave();">
+                    <option value="">-- 請選擇您的身分 --</option>
+                    <option value="operator">起重機操作手 (Operator)</option>
+                    <option value="rigger">吊掛指揮手 (Rigger)</option>
+                    <option value="both">操作及吊掛手 (兩者兼任)</option>
+                </select>
             </div>
-            <div class="row">
-                <div class="col-6"><label>1. 主承商 Main Contractor</label><input type="text" id="mainContractor" placeholder="輸入主承商..." oninput="autoSave()"></div>
-                <div class="col-6"><label>2. 次承商 Sub Contractor</label><input type="text" id="subContractor" placeholder="輸入次承商..." oninput="autoSave()"></div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <label style="color:#d63384;">3. 作業身分 Role (決定檢查項目) ★</label>
-                    <select id="userRole" onchange="renderPanels(); autoSave();" style="border: 2px solid #d63384;">
-                        <option value="">-- 請選擇身分 --</option>
-                        <option value="operator">起重機操作手 (Operator)</option>
-                        <option value="rigger">吊掛指揮手 (Rigger)</option>
-                        <option value="both">操作及吊掛手 (兩者兼任)</option>
-                    </select>
-                </div>
-                <div class="col-6"><label>4. 檢查人員姓名 Name</label><input type="text" id="inspectorName" placeholder="輸入姓名..." oninput="autoSave()"></div>
-                <div class="col-6"><label>5. 吊掛點位/車號</label><input type="text" id="liftingPoint" placeholder="輸入點位..." oninput="autoSave()"></div>
-            </div>
+            <div class="col-6"><label>4. 檢查人員姓名 Name</label><input type="text" id="inspectorName" oninput="autoSave()"></div>
+            <div class="col-6"><label>5. 吊掛點位/車號</label><input type="text" id="liftingPoint" placeholder="例如: A區 / 車號123" oninput="autoSave()"></div>
         </div>
 
         <div id="panelList"></div>
 
-        <div class="card-box" id="sig-section">
-            <div class="section-title">3. 簽名確認 Signature (必填)</div>
+        <div id="sig-section">
+            <div class="section-title">3. 簽名確認 (SIGNATURE)</div>
             <div class="sig-wrapper" id="sig-container">
                 <canvas id="sig-canvas"></canvas>
             </div>
             <div style="margin-top:10px; text-align:right;">
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSignature()">↺ 清除重簽</button>
+                <button type="button" class="btn btn-sm btn-outline-dark" onclick="clearSignature()" style="border-radius:0;">↺ 清除重簽 (Clear)</button>
             </div>
         </div>
     </form>
@@ -184,7 +265,7 @@
             id: "FIBC",
             title: "【太空包】太空包吊掛新規定",
             role: "all",
-           items: [
+            items: [
                 { id: "FI_01", title: "【雙層太空包】當太空包內裝有混凝土時，為了維持穩定，是否應採用「雙層太空包」盛裝，並將盛裝容量控制在 50% 以下？", image: "" },
                 { id: "FI_02", title: "【雙層太空包】在進行太空包吊掛作業時，若內容物含有金屬材質(可超過50%，如鋼筋)，是否應避免使用纖維布索，並選用「吊鏈」'「吊籃」來進行吊掛？", image: "" },
                 { id: "FI_03", title: "【太空包吊掛】根據目前的作業規定，進行太空包吊掛時，現場可使用的吊掛索具是否僅限於「吊鏈」、「3T纖維布索」或「吊籃」這三種？", image: "" },
@@ -270,7 +351,7 @@
             role: "rigger",
             items: [
                 { id: "E11", title: "【試吊】吊掛作業前是否完成試吊333運動？", image: "3.png" },
-            ]     
+            ]      
         }
     ];
 
@@ -325,11 +406,13 @@
         
         // 如果未選擇身分，顯示提示
         if(!userRole) {
-            container.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">請先於上方「作業身分」選擇您的角色<br>以載入對應檢查表。</div>`;
+            container.innerHTML = `<div style="text-align:center; padding:40px; color:#666; border:2px dashed #ccc; margin-bottom:20px;">
+                請先於上方<span style="color:#cc0000; font-weight:bold;">「3. 作業身分」</span>選擇您的角色<br>以載入對應檢查表。
+                </div>`;
             return;
         }
 
-        container.innerHTML = `<div class="section-title">2. 檢查項目 Checklist</div>`;
+        container.innerHTML = `<div class="section-title">2. 檢查項目 CHECKLIST</div>`;
         
         // 過濾邏輯
         const filteredConfig = CHECK_CONFIG.filter(config => {
@@ -356,10 +439,12 @@
                 html += `
                 <div class="select-box">
                     ${roleBadge}
-                    <label style="font-size:1.1rem; color:#0d6efd;">${config.title}</label>
-                    <select id="${config.id}_select" onchange="handleSelectChange('${config.id}')" style="margin-bottom:15px; border:2px solid #0d6efd;">
-                        ${optionsHtml}
-                    </select>
+                    <div style="padding:15px; border-bottom:1px solid #ddd;">
+                        <label style="font-size:1.1rem; color:#cc0000;">${config.title}</label>
+                        <select id="${config.id}_select" onchange="handleSelectChange('${config.id}')" style="margin-bottom:0; border:2px solid #cc0000;">
+                            ${optionsHtml}
+                        </select>
+                    </div>
                     ${Object.keys(config.options).map(key => {
                         return `<div id="${config.id}_group_${key}" class="sub-group-container" style="display:none;">
                             ${config.options[key].items.map(item => createQuestionHtml(item)).join('')}
@@ -371,28 +456,28 @@
             else if (config.type === "group") {
                 html += `
                 <div class="group-box">
-                    ${roleBadge}
-                    <div class="group-title">${config.title}</div>
+                    <div style="padding:10px 15px; background:#f0f0f0; border-bottom:1px solid #000;">
+                         ${roleBadge} 
+                         <span style="font-weight:bold; font-size:1.1rem;">${config.title}</span>
+                    </div>
                     ${config.items.map(item => createQuestionHtml(item)).join('')}
                 </div>`;
             }
             // C. 一般單題
             else {
-                html += `<div>${roleBadge} ${createQuestionHtml({id: config.id, title: config.title, image: config.image})}</div>`;
+                // 這裡將一般單題也包裝得像表格行
+                html += `<div style="border:2px solid #000; margin-bottom:20px; background:#fff;">
+                        <div style="padding:5px 10px; background:#f0f0f0; border-bottom:1px solid #000;">${roleBadge} <strong>${config.title}</strong></div>
+                         ${createQuestionHtml({id: config.id, title: config.title, image: config.image}, true)}
+                         </div>`;
             }
             container.innerHTML += html;
         });
         
-        // 重新綁定事件後，若有已存資料需恢復勾選狀態 (因為 DOM 重建了)
-        // 但由於 autoSave 會存，我們依賴 loadDraft 再次填充狀態，或者這裡僅渲染結構
-        // 為了流暢體驗，我們需要從 DB 或記憶體中恢復狀態。
-        // 這裡簡單處理：如果是因為 onchange 觸發，不需要重載值(因為是新表格)，但如果是 Load 觸發，會在 Load 函數處理。
-        // 若使用者在填寫途中切換角色，會觸發重新渲染，已填寫的通用欄位值還在 DOM (若 ID 相同)，但因為 innerHTML 重寫會消失。
-        // 因此建議切換角色視為重置表格，或者在 render 後補填。
         restoreValuesAfterRender();
     }
 
-    function createQuestionHtml(item) {
+    function createQuestionHtml(item, isSingle = false) {
         let illustrationHtml = "";
         if(item.image) {
             illustrationHtml = `
@@ -401,25 +486,32 @@
                 <img src="${item.image}" class="illustration-img" onerror="this.style.display='none'" alt="示意圖">
             </div>`;
         }
-        return `
-        <div class="panel-row" id="row_${item.id}" data-id="${item.id}">
-            <div class="item-title">${item.title}</div>
+        
+        // 若是單題，不需要外層的 panel-row 樣式，因為已經在 renderPanels 包過了，或是調整樣式
+        // 為了保持一致性，我們直接使用 panel-row 但調整一下視覺
+        const content = `
+            <div class="item-title" ${isSingle ? 'style="display:none"' : ''}>${item.title}</div>
             ${illustrationHtml}
             <div class="btn-check-group">
                 <input type="radio" class="btn-check-pass" name="${item.id}" id="${item.id}_pass" value="Pass" onchange="checkStatus('${item.id}'); autoSave()">
-                <label class="btn-check-label" for="${item.id}_pass">是 (正常)</label>
+                <label class="btn-check-label" for="${item.id}_pass">是 (Pass)</label>
                 <input type="radio" class="btn-check-fail" name="${item.id}" id="${item.id}_fail" value="Fail" onchange="checkStatus('${item.id}'); autoSave()">
-                <label class="btn-check-label" for="${item.id}_fail">否 (異常)</label>
+                <label class="btn-check-label" for="${item.id}_fail">否 (Fail)</label>
             </div>
             <div style="margin-top:10px;">
-                <input type="text" id="note_${item.id}" placeholder="備註說明..." oninput="autoSave()" style="margin-bottom:5px;">
-                <label class="btn btn-sm btn-outline-secondary w-100">
-                    📷 拍攝照片 / 上傳
+                <input type="text" id="note_${item.id}" placeholder="備註說明 (Remarks)..." oninput="autoSave()" style="margin-bottom:5px; border-bottom:1px solid #ccc; border-top:none; border-left:none; border-right:none;">
+                <label class="btn btn-sm btn-outline-secondary w-100" style="border-radius:0;">
+                    📷 拍攝照片 / 上傳 Photo
                     <input type="file" id="file_${item.id}" accept="image/*" capture="environment" style="display:none" onchange="handleImage(this, '${item.id}')">
                 </label>
                 <div class="preview-container"><img id="preview_${item.id}" class="preview-img"></div>
-            </div>
-        </div>`;
+            </div>`;
+
+        if (isSingle) {
+            return `<div style="padding:15px;">${content}</div>`;
+        } else {
+            return `<div class="panel-row" id="row_${item.id}" data-id="${item.id}">${content}</div>`;
+        }
     }
 
     window.handleSelectChange = function(groupId) {
@@ -433,11 +525,14 @@
 
     window.checkStatus = function(id) {
         const row = document.getElementById(`row_${id}`);
-        const pass = document.getElementById(`${id}_pass`).checked;
-        const fail = document.getElementById(`${id}_fail`).checked;
-        row.classList.remove('completed', 'error');
-        if(pass) row.classList.add('completed');
-        if(fail) row.classList.add('error');
+        // 如果是單題，可能沒有 row_${id} 包裹在外層，或者結構不同，這裡做簡單容錯
+        if(row) {
+            const pass = document.getElementById(`${id}_pass`).checked;
+            const fail = document.getElementById(`${id}_fail`).checked;
+            row.classList.remove('completed', 'error');
+            if(pass) row.classList.add('completed');
+            if(fail) row.classList.add('error');
+        }
     }
 
     window.handleImage = function(input, id) {
@@ -453,7 +548,7 @@
     }
 
     // === 6. 自動儲存與讀取 ===
-    let savedDataCache = null; // 用於暫存資料以便切換角色後回填
+    let savedDataCache = null; 
     let saveTimer; 
     window.autoSave = function() { clearTimeout(saveTimer); saveTimer = setTimeout(saveToDB, 500); }
     
@@ -463,25 +558,21 @@
             date: document.getElementById('checkDate').value,
             main: document.getElementById('mainContractor').value,
             sub: document.getElementById('subContractor').value,
-            role: document.getElementById('userRole').value, // 儲存角色
+            role: document.getElementById('userRole').value, 
             insp: document.getElementById('inspectorName').value,
             point: document.getElementById('liftingPoint').value,
             selections: {}
         };
-        // 儲存下拉選單狀態
+        
         CHECK_CONFIG.filter(c => c.type === 'selection').forEach(c => {
             const el = document.getElementById(`${c.id}_select`);
             if(el) basicInfo.selections[c.id] = el.value;
         });
 
-        // 收集所有可能的輸入 (即使現在不可見，如果切換回來也要盡量保留，但簡化起見只存目前 DOM)
-        // 為了支援切換角色不丟失資料，這裡應該存記憶體變數，但實務上重刷 DOM 會丟失 listener。
-        // 我們這裡只存目前 DOM 有的東西。
         const radios = Array.from(document.querySelectorAll('input[type="radio"]:checked')).map(r => r.id);
         const notes = Array.from(document.querySelectorAll('input[type="text"][id^="note_"]')).reduce((acc, el) => ({...acc, [el.id]: el.value}), {});
         const images = Array.from(document.querySelectorAll('.preview-img')).reduce((acc, img) => (img.src && img.src.startsWith('data:') ? {...acc, [img.id]: img.src} : acc), {});
         
-        // 更新 Cache
         savedDataCache = { radios, notes, images };
 
         const data = { id: STORAGE_KEY, basicInfo: basicInfo, radios: radios, notes: notes, images: images, signature: isCanvasBlank() ? null : canvas.toDataURL() };
@@ -494,7 +585,6 @@
         db.transaction(["drafts"]).objectStore("drafts").get(STORAGE_KEY).onsuccess = (e) => {
             const data = e.target.result; if(!data) return;
             
-            // 1. 恢復基本資料與角色
             if(data.basicInfo) {
                 document.getElementById('checkDate').value = data.basicInfo.date || "";
                 document.getElementById('mainContractor').value = data.basicInfo.main || "";
@@ -504,11 +594,9 @@
                 document.getElementById('userRole').value = data.basicInfo.role || "";
             }
 
-            // 2. 設置 Cache 並渲染畫面 (這會清空 DOM)
             savedDataCache = { radios: data.radios || [], notes: data.notes || {}, images: data.images || {} };
             renderPanels(); 
 
-            // 3. 恢復選單選擇 (需在 render 之後)
             if(data.basicInfo && data.basicInfo.selections) {
                 Object.keys(data.basicInfo.selections).forEach(key => {
                     const select = document.getElementById(`${key}_select`);
@@ -516,7 +604,6 @@
                 });
             }
 
-            // 4. 恢復內容 (由 restoreValuesAfterRender 統一處理)
             restoreValuesAfterRender();
 
             if(data.signature) { const i = new Image(); i.src = data.signature; i.onload = () => ctx.drawImage(i,0,0, canvas.width, canvas.height); }
@@ -525,21 +612,18 @@
 
     function restoreValuesAfterRender() {
         if(!savedDataCache) return;
-        // 恢復 Radio
         if(savedDataCache.radios) {
             savedDataCache.radios.forEach(id => { 
                 const el = document.getElementById(id); 
                 if(el) { el.checked = true; const rowId = id.replace(/_(pass|fail)$/, ''); checkStatus(rowId); } 
             });
         }
-        // 恢復 Note
         if(savedDataCache.notes) {
             Object.keys(savedDataCache.notes).forEach(k => { 
                 const el = document.getElementById(k); 
                 if(el) el.value = savedDataCache.notes[k]; 
             });
         }
-        // 恢復圖片
         if(savedDataCache.images) {
             Object.keys(savedDataCache.images).forEach(k => { 
                 const img = document.getElementById(k); 
@@ -556,7 +640,6 @@
         if(basicFields.some(id => !document.getElementById(id).value)) { alert("⚠️ 請填寫完整的「作業基本資料」！"); window.scrollTo(0,0); return; }
         if(isCanvasBlank()) { alert("⚠️ 請簽名！"); document.getElementById('sig-canvas').classList.add('sig-error'); document.getElementById('sig-section').scrollIntoView(); return; }
         
-        // 僅選取目前可見的題目
         const visibleRows = Array.from(document.querySelectorAll('.panel-row')).filter(row => row.offsetParent !== null);
         
         let errorCount = 0; let firstErrorRow = null;
@@ -570,8 +653,14 @@
 
         let reportItemsHtml = ""; let failCount = 0;
         visibleRows.forEach(row => {
+            // 由於結構可能改變，需確保能抓到 title
             const id = row.getAttribute('data-id');
-            const title = row.querySelector('.item-title').innerText;
+            const titleEl = row.querySelector('.item-title');
+            // 若 item-title 被隱藏 (單題模式)，我們需要從 config 或其他方式抓取，
+            // 但現在我們在 createQuestionHtml 裡保留了 item-title 只是隱藏，所以 innerText 還是抓得到的
+            // 不過 innerText 在 display:none 時可能會是空字串，改用 textContent
+            const title = titleEl ? titleEl.textContent : "檢查項目";
+            
             const isPass = document.getElementById(`${id}_pass`).checked;
             const noteVal = document.getElementById(`note_${id}`).value;
             const imgEl = document.getElementById(`preview_${id}`);
@@ -598,19 +687,19 @@
         const fullHtml = `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>起重吊掛檢查報告</title>
     <style>
         body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; padding: 40px; background: #fff; color: #000; margin: 0; }
-        .container { max-width: 800px; margin: 0 auto; border: 1px solid #ddd; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .report-header { text-align: center; border-bottom: 2px solid #0d6efd; margin-bottom: 20px; padding-bottom: 10px; }
+        .container { max-width: 800px; margin: 0 auto; border: 2px solid #000; padding: 30px; }
+        .report-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
         .report-title { font-size: 28px; font-weight: 900; margin: 0; color: #000; }
-        .report-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; font-size: 16px; }
-        .report-section-title { font-size: 18px; font-weight: bold; color: #0d6efd; border-left: 5px solid #0d6efd; padding-left: 10px; margin-bottom: 15px; margin-top: 25px; }
-        .report-item { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .report-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; border: 1px solid #000; padding: 20px; background: #fff; font-size: 16px; }
+        .report-section-title { font-size: 18px; font-weight: bold; color: #fff; background: #000; padding: 5px 10px; margin-bottom: 15px; margin-top: 25px; -webkit-print-color-adjust: exact; }
+        .report-item { border-bottom: 1px solid #000; padding: 12px 0; }
         .report-item-head { font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .report-img-large { max-height: 300px; max-width: 100%; border: 1px solid #ccc; display: block; margin: 8px 0; border-radius: 4px; }
+        .report-img-large { max-height: 300px; max-width: 100%; border: 1px solid #000; display: block; margin: 8px 0; }
         .report-footer { margin-top: 40px; display: flex; justify-content: space-between; }
-        .report-sig-box { text-align: center; width: 45%; }
+        .report-sig-box { text-align: center; width: 45%; border: 1px solid #000; padding: 10px; }
         .report-sig-line { border-top: 1px solid #000; padding-top: 8px; font-weight: bold; margin-top: 5px; font-size: 16px;}
         .report-sig-img { height: 70px; display: block; margin: 0 auto; }
-        .txt-pass { color: #198754; } .txt-fail { color: #dc3545; }
+        .txt-pass { color: #000; font-weight:bold; } .txt-fail { color: #cc0000; font-weight:bold; }
     </style></head><body>
     <div class="container">
         <div class="report-header"><div class="report-title">🏗️ 起重吊掛作業前聯合自檢報告</div></div>
@@ -624,7 +713,7 @@
         </div>
         <div class="report-section-title">檢查結果細項 (${role})</div>
         <div>${reportItemsHtml}</div>
-        <div style="margin-top:20px; font-size:18px; font-weight:bold; border-top:2px solid #ccc; padding-top:10px;">
+        <div style="margin-top:20px; font-size:18px; font-weight:bold; border-top:2px solid #000; padding-top:10px;">
             總結：${failCount > 0 ? '<span style="color:red">異常 (' + failCount + ' 項) - 請立即改善</span>' : '<span style="color:green">全數合格 - 可開始作業</span>'}
         </div>
         <div class="report-footer">
